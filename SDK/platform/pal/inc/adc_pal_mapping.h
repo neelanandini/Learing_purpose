@@ -1,0 +1,127 @@
+/*
+ * Copyright 2017-2019 NXP
+ * All rights reserved.
+ *
+ * THIS SOFTWARE IS PROVIDED BY NXP "AS IS" AND ANY EXPRESSED OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL NXP OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#ifndef ADC_PAL_MAPPING_H
+#define ADC_PAL_MAPPING_H
+
+#include "adc_pal_cfg.h"
+#include "device_registers.h"
+
+/* Include peripheral drivers */
+#if defined (ADC_PAL_S32K1xx)
+
+#include "adc_driver.h"
+#include "adc_hw_access.h"
+#include "trgmux_driver.h"
+#include "pdb_driver.h"
+
+#endif /* defined(ADC_PAL_S32K1xx) */
+
+#if defined (ADC_PAL_TYPE_ADC_SAR_BCTU)
+
+#include "adc_sar_driver.h"
+#include "bctu_driver.h"
+
+#endif /* defined(ADC_PAL_TYPE_ADC_SAR_BCTU) */
+
+#if defined (ADC_PAL_TYPE_ADC_SAR_CTU)
+
+#include "adc_sar_driver.h"
+#include "ctu_driver.h"
+
+#endif /* defined(ADC_PAL_TYPE_ADC_SAR_CTU) */
+
+#if defined (ADC_PAL_SAR)
+
+#include "adc_sar_driver.h"
+
+#endif /* defined(ADC_PAL_SAR) */
+
+#if defined (ADC_PAL_TYPE_SDADC)
+
+#include "sdadc_driver.h"
+
+#endif /* defined (ADC_PAL_TYPE_SDADC) */
+
+#if defined (ADC_PAL_TYPE_EQADC)
+
+#include "eqadc_driver.h"
+#include "eqadc_hw_access.h"
+
+#endif /* defined (ADC_PAL_TYPE_EQADC) */
+
+
+/*!
+ * @brief Enumeration with the types of ADC peripherals supported by ADC PAL
+ *
+ * This enumeration contains the types of ADC peripherals supported by ADC PAL.
+ * Implements : adc_inst_type_t_Class
+ */
+typedef enum
+{
+#if (defined (PDB_INSTANCE_COUNT) && defined (TRGMUX_INSTANCE_COUNT))
+    ADC_INST_TYPE_ADC_S32K1xx      = 0u,
+#endif /* (defined(PDB_INSTANCE_COUNT) && defined(TRGMUX_INSTANCE_COUNT)) */
+
+#if defined (BCTU_INSTANCE_COUNT)
+    ADC_INST_TYPE_ADC_SAR_BCTU     = 1u,
+#endif /* defined(BCTU_INSTANCE_COUNT) */
+
+#if defined (CTU_INSTANCE_COUNT)
+    ADC_INST_TYPE_ADC_SAR_CTU      = 2u,
+#endif /* defined(CTU_INSTANCE_COUNT) */
+
+#if defined (ADC_PAL_HAS_ADC_SAR) && (! defined (PDB_INSTANCE_COUNT)) && (! defined (TRGMUX_INSTANCE_COUNT)) && \
+    (! defined (BCTU_INSTANCE_COUNT)) && (! defined (CTU_INSTANCE_COUNT))
+    ADC_INST_TYPE_ADC_SAR          = 3u, /* ADC SAR which is not connected to any triggering unit */
+#endif /* defined(CTU_INSTANCE_COUNT) */
+
+#if defined (SDADC_INSTANCE_COUNT)
+    ADC_INST_TYPE_SDADC            = 4u,
+#endif /* defined (SDADC_INSTANCE_COUNT) */
+
+#if defined (EQADC_INSTANCE_COUNT)
+    ADC_INST_TYPE_EQADC            = 5u,
+#endif /* defined (EQADC_INSTANCE_COUNT) */
+
+} adc_inst_type_t;
+
+
+/*!
+ * @brief Structure storing PAL instance information
+ *
+ * This structure is used for storing PAL instance information.
+ * Implements : adc_instance_t_Class
+ */
+typedef struct
+{
+    adc_inst_type_t instType;    /*!< Peripheral over which the PAL is used */
+    uint32_t instIdx;            /*!< Instance index of the peripheral (for ADC PAL the triggering/adc unit peripheral) over which the PAL is used */
+} adc_instance_t;
+
+
+#if (!defined(ADC_PAL_S32K1xx)          && \
+    !defined(ADC_PAL_TYPE_ADC_SAR_BCTU) && \
+    !defined(ADC_PAL_TYPE_ADC_SAR_CTU)  && \
+    !defined(ADC_PAL_HAS_ADC_SAR)       && \
+    !defined(ADC_PAL_TYPE_SDADC)        && \
+    !defined(ADC_PAL_TYPE_EQADC))
+#error "ADC PAL configuration ERROR - no supported type selected"
+#endif
+
+
+#endif /* ADC_PAL_MAPPING_H */
